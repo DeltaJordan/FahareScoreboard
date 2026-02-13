@@ -73,7 +73,7 @@ dependencies {
     compileOnly 'com.github.spotbugs:spotbugs-annotations:4.9.8'
 
     implementation 'io.papermc:paperlib:1.0.8'
-    implementation("net.megavex:scoreboard-library-api:${scoreboard_library_version}")
+    implementation "net.megavex:scoreboard-library-api:${scoreboard_library_version}"
 
     // Use git version of Fahare until FahareResetEvent is in the latest official release.
     implementation 'com.github.qixils:Fahare:7186b5f'
@@ -87,8 +87,8 @@ dependencies {
 
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher:6.0.2'
 
-    runtimeOnly("net.megavex:scoreboard-library-implementation:${scoreboard_library_version}")
-    runtimeOnly("net.megavex:scoreboard-library-modern:${scoreboard_library_version}")
+    runtimeOnly "net.megavex:scoreboard-library-implementation:${scoreboard_library_version}"
+    runtimeOnly "net.megavex:scoreboard-library-modern:${scoreboard_library_version}"
 }
 
 test {
@@ -113,8 +113,10 @@ tasks.withType(SpotBugsTask).configureEach {
 shadowJar {
     archiveClassifier.set('')
     relocate 'io.papermc.lib', 'shadow.io.papermc.paperlib'
-    relocate 'net.megavex.scoreboardlibrary', 'me.kelpdo.shaded.scoreboard'
-    minimize()
+    relocate 'net.megavex.scoreboardlibrary', 'me.kelpdo.faharescoreboard.libs.scoreboard'
+    minimize {
+        exclude(dependency("net.megavex:.*:.*"))
+    }
 }
 
 // Disable jar and replace with shadowJar
