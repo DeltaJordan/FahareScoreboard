@@ -63,6 +63,8 @@ public class ScoreboardManager {
         this.ensurePlayersOnline = config.getBoolean("ensurePlayersOnline");
         this.playerIdentifiers = config.getStringList("players");
 
+        this.lastTick = Instant.now();
+
         World world = plugin.getServer().getWorlds().getFirst();
         PersistentDataContainer pdc = world.getPersistentDataContainer();
 
