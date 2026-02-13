@@ -100,6 +100,12 @@ public class ScoreboardManager {
         this.componentSidebar = new ComponentSidebarLayout(title, lines);
     }
 
+    public void addPlayer(Player player) {
+        if (!this.sidebar.players().contains(player)) {
+            this.sidebar.addPlayer(player);
+        }
+    }
+
     public void deathReset() {
         if (this.currentRun.compareTo(this.longestRun) > 0) {
             this.longestRun = this.currentRun;

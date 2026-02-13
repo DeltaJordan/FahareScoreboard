@@ -7,6 +7,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 
@@ -41,5 +42,10 @@ public class ScoreboardListener implements Listener {
     @EventHandler(priority = EventPriority.MONITOR)
     public void onTick(ServerTickEndEvent event) {
         this.scoreboard.tick();
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR)
+    public void onPlayerJoin(PlayerJoinEvent event) {
+        this.scoreboard.addPlayer(event.getPlayer());
     }
 }
