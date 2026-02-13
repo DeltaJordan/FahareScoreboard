@@ -5,17 +5,3 @@ api-version: "1.21.11"
 author: DeltaJordan
 description: Adds a scoreboard for fahare-based hardcore runs.
 depend: [Fahare]
-commands:
-  ex:
-    description: Base command for EXAMPLE
-    usage: "For a list of commands, type /ex help"
-    aliases: example
-permissions:
-  example.test:
-    description: DESCRIPTION
-    default: true
-  example.*:
-    description: Grants all other permissions
-    default: false
-    children:
-      example.test: true
