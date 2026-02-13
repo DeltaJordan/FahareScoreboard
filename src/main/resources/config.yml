@@ -1,0 +1,9 @@
+# Should playerNames be used to tick the timer?
+ensurePlayersOnline: true
+
+# List of player names or UUIDs that need to be online to tick the timer.
+# If empty, this list will be ignored and the timer will run.
+players: []
+
+# Small utility feature, keeps spectators in spectator mode.
+spectators: []
