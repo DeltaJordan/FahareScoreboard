@@ -91,7 +91,7 @@ public class ScoreboardManager {
         SidebarComponent lines = SidebarComponent.builder()
             .addStaticLine(Component.text("Longest Run"))
             .addDynamicLine(() -> {
-                String longestRunText = String.format("%s:%s:%s",
+                String longestRunText = String.format("%02d:%02d:%02d",
                         this.longestRun.toHours(), 
                         this.longestRun.toMinutesPart(), 
                         this.longestRun.toSecondsPart());
@@ -100,7 +100,7 @@ public class ScoreboardManager {
             .addBlankLine()
             .addStaticLine(Component.text("Current Run"))
             .addDynamicLine(() -> {
-                String currentRunText = String.format("%s:%s:%s",
+                String currentRunText = String.format("%02d:%02d:%02d",
                         this.currentRun.toHours(), 
                         this.currentRun.toMinutesPart(), 
                         this.currentRun.toSecondsPart());

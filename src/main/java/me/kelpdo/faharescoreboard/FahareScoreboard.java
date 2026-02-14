@@ -43,12 +43,13 @@ public class FahareScoreboard extends JavaPlugin {
         this.getLifecycleManager().registerEventHandler(LifecycleEvents.COMMANDS, commands -> {
             LiteralCommandNode<CommandSourceStack> buildCommand = Commands.literal("faharescoreboard")
                 .then(Commands.literal("setDeaths")
-                    .then(Commands.argument("deathCount", IntegerArgumentType.integer()))
-                    .requires(Commands.restricted(source -> source.getSender().hasPermission(setDeathsPerm)))
-                    .executes(ctx -> {
-                        this.scoreboardManager.setDeaths(IntegerArgumentType.getInteger(ctx, "deathCount"));
-                        return Command.SINGLE_SUCCESS;
-                    })
+                    .then(Commands.argument("deathCount", IntegerArgumentType.integer())
+                        .requires(Commands.restricted(source -> source.getSender().hasPermission(setDeathsPerm)))
+                        .executes(ctx -> {
+                            this.scoreboardManager.setDeaths(IntegerArgumentType.getInteger(ctx, "deathCount"));
+                            return Command.SINGLE_SUCCESS;
+                        })
+                    )
                 )
                 .build();
 
