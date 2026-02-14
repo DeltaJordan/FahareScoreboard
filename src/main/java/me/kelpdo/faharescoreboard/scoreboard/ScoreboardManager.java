@@ -74,6 +74,7 @@ public class ScoreboardManager {
 
         long storedCurrentRun = pdc.getOrDefault(this.currentRunKey, RUN_DURATION_TYPE, 0L);
         this.runStart = Instant.now().minus(storedCurrentRun, ChronoUnit.NANOS);
+        this.currentRun = Duration.ofNanos(storedCurrentRun);
 
         long storedLongestRun = pdc.getOrDefault(this.longestRunKey, RUN_DURATION_TYPE, 0L);
         this.longestRun = Duration.ofNanos(storedLongestRun);
