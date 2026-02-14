@@ -5,6 +5,7 @@ import org.bukkit.permissions.PermissionDefault;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import com.mojang.brigadier.Command;
+import com.mojang.brigadier.arguments.BoolArgumentType;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.tree.LiteralCommandNode;
 
@@ -51,6 +52,12 @@ public class FahareScoreboard extends JavaPlugin {
                         })
                     )
                 )
+                .then(Commands.literal("resetTimer")
+                    .then(Commands.argument("incrementDeaths", BoolArgumentType.bool())
+                        .executes(ctx -> {
+                            this.scoreboardManager.deathReset(BoolArgumentType.getBool(ctx, "incrementDeaths"));
+                            return Command.SINGLE_SUCCESS;
+                        })))
                 .build();
 
             commands.registrar().register(buildCommand);

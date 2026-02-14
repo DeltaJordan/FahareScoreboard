@@ -125,13 +125,21 @@ public class ScoreboardManager {
     }
 
     public void deathReset() {
+        this.deathReset(true);
+    }
+
+    public void deathReset(boolean incrementDeaths) {
         if (this.currentRun.compareTo(this.longestRun) > 0) {
             this.longestRun = this.currentRun;
         }
 
         this.runStart = Instant.now();
         this.currentRun = Duration.ZERO;
-        this.totalDeaths++;
+
+        if (incrementDeaths) {
+            this.totalDeaths++;
+        }
+        
         this.save();
     }
 
