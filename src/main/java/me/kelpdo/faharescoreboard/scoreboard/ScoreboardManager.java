@@ -184,6 +184,9 @@ public class ScoreboardManager {
             }
 
             this.save();
+        } else {
+            this.runStart = Instant.now().minus(this.currentRun.toNanos(), ChronoUnit.NANOS);
+            this.currentRunColor = NamedTextColor.RED;
         }
 
         this.titleAnimation.nextFrame();
