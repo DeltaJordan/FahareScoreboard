@@ -7,3 +7,15 @@ players: []
 
 # Small utility feature, keeps spectators in spectator mode.
 spectators: []
+
+# Grace period in minutes between deaths to not update the scoreboard.
+deathGracePeriod: 1
+
+# Fix difficulty issues currently present in Fahare.
+fixDifficulty: true
+
+# If fixDifficulty is enabled, which difficulty to use.
+difficulty: "HARD"
+
+# If fixDifficulty is enabled, whether to set Hardcore mode.
+isHardcore: true

@@ -115,9 +115,11 @@ public class ScoreboardManager {
     }
 
     public void addPlayer(Player player) {
-        if (!this.sidebar.players().contains(player)) {
-            this.sidebar.addPlayer(player);
-        }
+        this.sidebar.addPlayer(player);
+    }
+
+    public void removePlayer(Player player) {
+        this.sidebar.removePlayer(player);
     }
 
     public void setDeaths(int deathCount) {

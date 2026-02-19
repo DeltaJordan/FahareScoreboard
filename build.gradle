@@ -60,11 +60,6 @@ repositories {
         }
     }
 
-    repositories {
-        mavenCentral()
-        maven { url 'https://jitpack.io' }
-    }
-
     mavenCentral()
 }
 
@@ -75,8 +70,7 @@ dependencies {
     implementation 'io.papermc:paperlib:1.0.8'
     implementation "net.megavex:scoreboard-library-api:${scoreboard_library_version}"
 
-    // Use git version of Fahare until FahareResetEvent is in the latest official release.
-    implementation 'com.github.qixils:Fahare:7186b5f'
+    // implementation 'com.github.qixils:Fahare:7186b5f'
 
     spotbugsPlugins 'com.h3xstream.findsecbugs:findsecbugs-plugin:1.14.0'
 
