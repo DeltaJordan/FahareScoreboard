@@ -6,6 +6,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.arguments.BoolArgumentType;
+import com.mojang.brigadier.arguments.DoubleArgumentType;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.tree.LiteralCommandNode;
 
@@ -48,6 +49,15 @@ public class FahareScoreboard extends JavaPlugin {
                         .requires(Commands.restricted(source -> source.getSender().hasPermission(setDeathsPerm)))
                         .executes(ctx -> {
                             this.scoreboardManager.setDeaths(IntegerArgumentType.getInteger(ctx, "deathCount"));
+                            return Command.SINGLE_SUCCESS;
+                        })
+                    )
+                )
+                .then(Commands.literal("setDragonHealth")
+                    .then(Commands.argument("percentage", DoubleArgumentType.doubleArg(0, 100))
+                        .requires(Commands.restricted(source -> source.getSender().hasPermission(setDeathsPerm)))
+                        .executes(ctx -> {
+                            this.scoreboardManager.setDragonHealth(DoubleArgumentType.getDouble(ctx, "percentage"), true);
                             return Command.SINGLE_SUCCESS;
                         })
                     )

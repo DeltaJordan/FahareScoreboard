@@ -6,11 +6,16 @@ import java.util.List;
 
 import org.bukkit.Difficulty;
 import org.bukkit.GameMode;
+import org.bukkit.attribute.Attribute;
+import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.entity.EnderDragon;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
@@ -82,6 +87,18 @@ public class ScoreboardListener implements Listener {
                 event.getWorld().setHardcore(config.getBoolean("isHardcore"));
             } catch (Exception e) {
                 plugin.getLogger().warning(() -> "Failed to fix difficulty of world " + event.getWorld().getName() + ":\n" + e);
+            }
+        }
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR)
+    public void onEntityDamaged(EntityDamageEvent event) {
+        if (event.getEntityType() == EntityType.ENDER_DRAGON) {
+            EnderDragon dragonEntity = (EnderDragon)event.getEntity();
+            AttributeInstance maxHealthAttribute = dragonEntity.getAttribute(Attribute.MAX_HEALTH);
+            if (maxHealthAttribute != null) {
+                double percentage = (dragonEntity.getHealth() / maxHealthAttribute.getValue()) * 100;
+                this.scoreboard.setDragonHealth(percentage);
             }
         }
     }

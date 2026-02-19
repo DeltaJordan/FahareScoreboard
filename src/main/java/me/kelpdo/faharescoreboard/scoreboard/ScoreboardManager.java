@@ -30,8 +30,9 @@ import net.megavex.scoreboardlibrary.api.sidebar.component.animation.CollectionS
 import net.megavex.scoreboardlibrary.api.sidebar.component.animation.SidebarAnimation;
 
 public class ScoreboardManager {
-    private static final PersistentDataType RUN_DURATION_TYPE = PersistentDataType.LONG;
-    private static final PersistentDataType DEATHS_TYPE = PersistentDataType.INTEGER;
+    private static final PersistentDataType PDC_INT_TYPE = PersistentDataType.INTEGER;
+    private static final PersistentDataType PDC_LONG_TYPE = PersistentDataType.LONG;
+    private static final PersistentDataType PDC_DOUBLE_TYPE = PersistentDataType.DOUBLE;
 
     private final Plugin plugin;
 
@@ -42,6 +43,7 @@ public class ScoreboardManager {
     private final NamespacedKey longestRunKey;
     private final NamespacedKey currentRunKey;
     private final NamespacedKey deathsKey;
+    private final NamespacedKey dragonHealthKey;
 
     private final boolean ensurePlayersOnline;
     private final List<String> playerIdentifiers;
@@ -50,6 +52,7 @@ public class ScoreboardManager {
 
     private Duration longestRun;
     private TextColor longestRunColor;
+    private double lowestDragonHealthPercentage = 100;
 
     private Duration currentRun;
     private TextColor currentRunColor;
@@ -64,6 +67,7 @@ public class ScoreboardManager {
         this.currentRunKey = new NamespacedKey(plugin, "currentRun");
         this.longestRunKey = new NamespacedKey(plugin, "longestRun");
         this.deathsKey = new NamespacedKey(plugin, "deaths");
+        this.dragonHealthKey = new NamespacedKey(plugin, "dragonHealth");
 
         FileConfiguration config = plugin.getConfig();
         this.ensurePlayersOnline = config.getBoolean("ensurePlayersOnline");
@@ -72,14 +76,15 @@ public class ScoreboardManager {
         World world = plugin.getServer().getWorlds().getFirst();
         PersistentDataContainer pdc = world.getPersistentDataContainer();
 
-        long storedCurrentRun = pdc.getOrDefault(this.currentRunKey, RUN_DURATION_TYPE, 0L);
+        long storedCurrentRun = pdc.getOrDefault(this.currentRunKey, PDC_LONG_TYPE, 0L);
         this.runStart = Instant.now().minus(storedCurrentRun, ChronoUnit.NANOS);
         this.currentRun = Duration.ofNanos(storedCurrentRun);
 
-        long storedLongestRun = pdc.getOrDefault(this.longestRunKey, RUN_DURATION_TYPE, 0L);
+        long storedLongestRun = pdc.getOrDefault(this.longestRunKey, PDC_LONG_TYPE, 0L);
         this.longestRun = Duration.ofNanos(storedLongestRun);
 
-        this.totalDeaths = pdc.getOrDefault(deathsKey, DEATHS_TYPE, 0);
+        this.lowestDragonHealthPercentage = pdc.getOrDefault(dragonHealthKey, PDC_DOUBLE_TYPE, 100);
+        this.totalDeaths = pdc.getOrDefault(deathsKey, PDC_INT_TYPE, 0);
 
         this.titleAnimation = this.createGradientAnimation(Component.text("⫘⫘⫘⫘⫘Chained Together⫘⫘⫘⫘⫘"));
         SidebarComponent title = SidebarComponent.animatedLine(this.titleAnimation);
@@ -87,6 +92,11 @@ public class ScoreboardManager {
         SidebarComponent totalDeathComponent = new KeyValueSidebarComponent(
             Component.text("Total Deaths"),
             () -> Component.text(this.totalDeaths)
+        );
+
+        SidebarComponent lowestDragonHealth = new KeyValueSidebarComponent(
+            Component.text("Lowest Dragon Health"),
+            () -> Component.text(String.format("%.1f%s", this.lowestDragonHealthPercentage, "%"))
         );
 
         SidebarComponent lines = SidebarComponent.builder()
@@ -98,6 +108,7 @@ public class ScoreboardManager {
                         this.longestRun.toSecondsPart());
                 return Component.text(longestRunText, this.longestRunColor);
             })
+            .addComponent(lowestDragonHealth)
             .addBlankLine()
             .addStaticLine(Component.text("Current Run"))
             .addDynamicLine(() -> {
@@ -125,6 +136,16 @@ public class ScoreboardManager {
     public void setDeaths(int deathCount) {
         this.totalDeaths = deathCount;
         this.save();
+    }
+
+    public void setDragonHealth(double percentage) {
+        this.setDragonHealth(percentage, false);
+    }
+
+    public void setDragonHealth(double percentage, boolean overwrite) {
+        if (overwrite || percentage < this.lowestDragonHealthPercentage) {
+            this.lowestDragonHealthPercentage = percentage;
+        }
     }
 
     public void deathReset() {
@@ -201,9 +222,10 @@ public class ScoreboardManager {
     private void save() {
         World world = this.plugin.getServer().getWorlds().getFirst();
         PersistentDataContainer pdc = world.getPersistentDataContainer();
-        pdc.set(this.longestRunKey, RUN_DURATION_TYPE, this.longestRun.toNanos());
-        pdc.set(this.currentRunKey, RUN_DURATION_TYPE, this.currentRun.toNanos());
-        pdc.set(this.deathsKey, DEATHS_TYPE, this.totalDeaths);
+        pdc.set(this.longestRunKey, PDC_LONG_TYPE, this.longestRun.toNanos());
+        pdc.set(this.currentRunKey, PDC_LONG_TYPE, this.currentRun.toNanos());
+        pdc.set(this.deathsKey, PDC_INT_TYPE, this.totalDeaths);
+        pdc.set(this.dragonHealthKey, PDC_DOUBLE_TYPE, this.lowestDragonHealthPercentage);
     }
 
     @SuppressFBWarnings(value = "FL")
