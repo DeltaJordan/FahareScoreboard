@@ -83,7 +83,7 @@ public class ScoreboardManager {
         long storedLongestRun = pdc.getOrDefault(this.longestRunKey, PDC_LONG_TYPE, 0L);
         this.longestRun = Duration.ofNanos(storedLongestRun);
 
-        this.lowestDragonHealthPercentage = pdc.getOrDefault(dragonHealthKey, PDC_DOUBLE_TYPE, 100);
+        this.lowestDragonHealthPercentage = pdc.getOrDefault(dragonHealthKey, PDC_DOUBLE_TYPE, 100D);
         this.totalDeaths = pdc.getOrDefault(deathsKey, PDC_INT_TYPE, 0);
 
         this.titleAnimation = this.createGradientAnimation(Component.text("⫘⫘⫘⫘⫘Chained Together⫘⫘⫘⫘⫘"));
