@@ -237,7 +237,7 @@ public class ScoreboardManager {
 
         float phase = -1f;
         while (phase < 1) {
-            frames.add(MiniMessage.miniMessage().deserialize("<gradient:yellow:gold:" + phase + "><text>", textPlaceholder));
+            frames.add(MiniMessage.miniMessage().deserialize("<gradient:red:gold:" + phase + "><text>", textPlaceholder));
             phase += step;
         }
 

@@ -19,3 +19,7 @@ difficulty: "HARD"
 
 # If fixDifficulty is enabled, whether to set Hardcore mode.
 isHardcore: true
+
+# Fixes an issue in chained together servers where the respawn_radius
+# game rule does not get set when creating an new world.
+fixChainedTogether: true

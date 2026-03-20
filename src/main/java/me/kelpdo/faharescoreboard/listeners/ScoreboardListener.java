@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.bukkit.Difficulty;
 import org.bukkit.GameMode;
+import org.bukkit.GameRules;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -17,9 +18,10 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
+import org.bukkit.event.player.PlayerGameModeChangeEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
-import org.bukkit.event.world.WorldLoadEvent;
+import org.bukkit.event.world.WorldInitEvent;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 
@@ -44,13 +46,6 @@ public class ScoreboardListener implements Listener {
 
     @EventHandler(priority = EventPriority.MONITOR)
     public void onPlayerDeath(PlayerDeathEvent event) {
-        List<String> spectators = this.plugin.getConfig().getStringList("spectators");
-        for (Player player : this.plugin.getServer().getOnlinePlayers()) {
-            if (spectators.contains(player.getName()) || spectators.contains(player.getUniqueId().toString())) {
-                player.setGameMode(GameMode.SPECTATOR);
-            }
-        }
-
         Duration sinceLastDeath = Duration.between(lastDeath, Instant.now());
         if (sinceLastDeath.toMinutes() < 1)
         {
@@ -61,14 +56,32 @@ public class ScoreboardListener implements Listener {
         this.lastDeath = Instant.now();
     }
 
+    @EventHandler(priority = EventPriority.HIGHEST)
+    public void onPlayerGameModeChanged(PlayerGameModeChangeEvent event) {
+        Player player = event.getPlayer();
+        if (!player.isOnline() || event.getNewGameMode() == GameMode.SPECTATOR) return;
+
+        List<String> spectators = this.plugin.getConfig().getStringList("spectators");
+        if (spectators.contains(player.getName()) || spectators.contains(player.getUniqueId().toString())) {
+            event.setCancelled(true);
+            player.setGameMode(GameMode.SPECTATOR);
+        }
+    }
+
     @EventHandler(priority = EventPriority.MONITOR)
     public void onTick(ServerTickEndEvent event) {
         this.scoreboard.tick();
     }
 
-    @EventHandler(priority = EventPriority.MONITOR)
+    @EventHandler(priority = EventPriority.HIGHEST)
     public void onPlayerJoin(PlayerJoinEvent event) {
-        this.scoreboard.addPlayer(event.getPlayer());
+        Player player = event.getPlayer();
+        this.scoreboard.addPlayer(player);
+
+        List<String> spectators = this.plugin.getConfig().getStringList("spectators");
+        if (spectators.contains(player.getName()) || spectators.contains(player.getUniqueId().toString())) {
+            player.setGameMode(GameMode.SPECTATOR);
+        }
     }
 
     @EventHandler(priority = EventPriority.MONITOR)
@@ -77,8 +90,9 @@ public class ScoreboardListener implements Listener {
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)
-    public void onPlayerPortal(WorldLoadEvent event) {
+    public void onWorldInit(WorldInitEvent event) {
         FileConfiguration config = plugin.getConfig();
+
         if (config.getBoolean("fixDifficulty")) {
             try {
                 String difficultyStr = config.getString("difficulty");
@@ -87,6 +101,14 @@ public class ScoreboardListener implements Listener {
                 event.getWorld().setHardcore(config.getBoolean("isHardcore"));
             } catch (Exception e) {
                 plugin.getLogger().warning(() -> "Failed to fix difficulty of world " + event.getWorld().getName() + ":\n" + e);
+            }
+        }
+
+        if (config.getBoolean("fixChainedTogether")) {
+            try {
+                event.getWorld().setGameRule(GameRules.RESPAWN_RADIUS, 0);
+            } catch (Exception e) {
+                plugin.getLogger().warning(() -> "Failed to set respawn radius of world " + event.getWorld().getName() + ":\n" + e);
             }
         }
     }
