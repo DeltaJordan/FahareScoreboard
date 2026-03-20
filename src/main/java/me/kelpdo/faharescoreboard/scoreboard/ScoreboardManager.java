@@ -120,21 +120,6 @@ public class ScoreboardManager {
             })
             .addBlankLine()
             .addComponent(totalDeathComponent)
-            .addBlankLine()
-            .addStaticLine(Component.text("Gamers"))
-            .addDynamicLine(() -> {
-                var builder = Component.text();
-                for (Player player : plugin.getServer().getOnlinePlayers()) {
-                    if (player.getGameMode() != GameMode.SURVIVAL) continue;
-
-                    builder.append(Component.text(player.getName()));
-                    builder.append(Component.text(": "));
-                    builder.append(Component.score(player.getScoreboardEntryName(), "health"));
-                    builder.append(Component.newline());
-                }
-
-                return builder;
-            })
             .build();
 
         this.componentSidebar = new ComponentSidebarLayout(title, lines);
